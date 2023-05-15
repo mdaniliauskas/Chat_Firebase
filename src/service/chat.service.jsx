@@ -7,6 +7,9 @@ const CONFIG = {
 
 const app = initializeApp(CONFIG);
 
+
+let subscriptions = {};
+
 export const getDb = () => {
   return getDatabase(app);
 }
@@ -30,14 +33,18 @@ export async function writeData(name, email) {
   }
 }
 
-export function getObservable(path, callback){
-  return onValue(ref(db, path), (snapshot) => {
+export function subscription(path, callback) {
+  const unsubCallback = onValue(ref(db, path), (snapshot) => {
     const data = snapshot.val();
     let vet = []
     for (const [key, value] of Object.entries(data)) {
-      console.log({key, ...value});
-      vet.push(value)
+      vet.push({key, ...value})
     }
     callback(vet)
   });
+  subscriptions[path] = unsubCallback;
+}
+
+export async function unsubscription(path) {
+  await subscriptions[path]()
 }

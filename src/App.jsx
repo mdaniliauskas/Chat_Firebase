@@ -1,5 +1,5 @@
 import {useEffect, useState} from "react";
-import {getObservable, writeData} from "./service/chat.service.jsx";
+import {subscription, unsubscription, writeData} from "./service/chat.service.jsx";
 
 
 function App() {
@@ -15,7 +15,7 @@ function App() {
   }
 
   useEffect(() => {
-    getObservable("users", searchUser)
+    subscription("users", searchUser);
   }, [])
 
 
@@ -35,8 +35,13 @@ function App() {
         <input type="text" name="email" id="email"/>
         <br/>
         <button type="submit">Enviar</button>
+        <br/>
       </form>
       {usersList.map( u => <p key={u.key}>{u.username}</p>)}
+      <br/>
+    <button type="button" onClick={() => unsubscription("users")}>Unsub</button>
+    <button type="button" onClick={() => subscription("users", searchUser)}>Sub</button>
+      <br/>
     </>
   );
 }
