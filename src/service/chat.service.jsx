@@ -35,12 +35,13 @@ export async function writeData(name, email) {
 
 export function subscription(path, callback) {
   const unsubCallback = onValue(ref(db, path), (snapshot) => {
-    const data = snapshot.val();
-    let vet = []
-    for (const [key, value] of Object.entries(data)) {
+    let vet = [];
+    snapshot.forEach((childSnapshot) => {
+      const key = childSnapshot.key;
+      const value = childSnapshot.val();
       vet.push({key, ...value})
-    }
-    callback(vet)
+    })
+    callback(vet);
   });
   subscriptions[path] = unsubCallback;
 }
