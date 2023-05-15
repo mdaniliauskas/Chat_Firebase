@@ -1,5 +1,5 @@
 import {initializeApp} from "firebase/app";
-import {child, getDatabase, onValue, push, ref, set} from "firebase/database";
+import {child, getDatabase, onValue, orderByChild, push, query, ref, set, serverTimestamp} from "firebase/database";
 
 const CONFIG = {
   databaseURL: "https://acessibilidade-dev-chat-default-rtdb.firebaseio.com",
@@ -21,11 +21,12 @@ export async function writeData(name, email) {
   let userId = push(child(ref(db), 'users')).key;
 
   const userRef = ref(db, "users/" + userId);
-
   try {
     await set(userRef, {
-      username: name,
-      email: email,
+      username: name.toLowerCase(),
+      email: email.toLowerCase(),
+      //createdAt: new Intl.DateTimeFormat('pt-BR').format(new Date())
+      createdAt: serverTimestamp()
     });
     console.log("Usuario criado com sucesso")
   } catch (e) {
@@ -34,7 +35,7 @@ export async function writeData(name, email) {
 }
 
 export function subscription(path, callback) {
-  const unsubCallback = onValue(ref(db, path), (snapshot) => {
+  const unsubCallback = onValue(query(ref(db, path), orderByChild("createdAt")), (snapshot) => {
     let vet = [];
     snapshot.forEach((childSnapshot) => {
       const key = childSnapshot.key;

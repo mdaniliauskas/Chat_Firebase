@@ -37,10 +37,11 @@ function App() {
         <button type="submit">Enviar</button>
         <br/>
       </form>
-      {usersList.map( u => <p key={u.key}>{u.username}</p>)}
+      {usersList.map(u => <p
+        key={u.key}>{u.username + " | " + u.email + " | " + new Intl.DateTimeFormat('pt-BR').format(new Date(u.createdAt))}</p>)}
       <br/>
-    <button type="button" onClick={() => unsubscription("users")}>Unsub</button>
-    <button type="button" onClick={() => subscription("users", searchUser)}>Sub</button>
+      <button type="button" onClick={() => unsubscription("users")}>Unsub</button>
+      <button type="button" onClick={() => subscription("users", searchUser)}>Sub</button>
       <br/>
     </>
   );
